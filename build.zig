@@ -24,7 +24,7 @@ fn target(arch: builtin.Arch) std.zig.CrossTarget {
 pub fn build(b: *Builder) void {
     const targ = target(builtin.Arch.mips);
 
-    const kernel = b.addExecutable("r-os", "test.zig");
+    const kernel = b.addExecutable("zig-async", "test.zig");
     kernel.setTarget(targ);
     kernel.addAssemblyFile("start.S");
     kernel.setBuildMode(.ReleaseSmall);
@@ -32,11 +32,4 @@ pub fn build(b: *Builder) void {
     kernel.setOutputDir(b.cache_root);
     kernel.setLinkerScriptPath("linker.ld");
     kernel.install();
-    const run_objcopy = b.addSystemCommand(&[_][]const u8{
-        "/home/matt/mnt/compile/limine9/toolchain/bin/mips-elf-objcopy", kernel.getOutputPath(),
-        "-O",                                                            "binary",
-        "r-os.bin",
-    });
-    run_objcopy.step.dependOn(&kernel.step);
-    b.default_step.dependOn(&run_objcopy.step);
 }
